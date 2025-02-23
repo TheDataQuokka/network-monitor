@@ -7,7 +7,7 @@ This repository provides two Python-based tools designed to help you monitor and
 - **LogReader**  
   A log parsing and plotting utility that:
   - Reads network log files containing metrics such as packet loss, ping times, and jitter.
-  - Splits log data into segments if gaps longer than 60 seconds are detected.
+  - Datawrangling options
   - Offers interactive chart options (line or bar) to visualize each metric.
   - Generates summary histograms and a 30-minute sample with an LLM prompt for detailed analysis.
 
@@ -35,6 +35,8 @@ This repository provides two Python-based tools designed to help you monitor and
 - Python 3.x
 - Libraries: `matplotlib`, `tkinter`, and `configparser`
 - A working `ping` command (platform-dependent)
+
+***Tested working on windows 11 but untested on linux and apple. 
 
 ## Installation
 
