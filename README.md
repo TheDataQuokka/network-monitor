@@ -91,6 +91,7 @@ This project is licensed under the GNU General Public License v3.0. For more det
 ## Contributing
 
 Contributions, issues, and feature requests are welcome! Please feel free to open issues or submit pull requests.
+-TheDataQuokka
 
 ## Acknowledgements
 
