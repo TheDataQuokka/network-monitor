@@ -57,7 +57,10 @@ CONFIG_FILE = 'ping_config.ini'
 
 # Pre-compile regex patterns for performance optimization
 # These patterns match the output format of ping commands across different platforms
-REPLY_TIME_PATTERN = re.compile(r"time[=<]\s*(\d+)ms")
+# Match ping replies like "time=9ms", "time<1ms", or "time=0.37 ms".
+# Some ping implementations include fractional milliseconds and a space
+# before the "ms" unit, so we capture optional decimals and whitespace.
+REPLY_TIME_PATTERN = re.compile(r"time[=<]\s*(\d+(?:\.\d+)?)\s*ms")
 PACKET_COUNT_PATTERN = re.compile(r"Sent = (\d+), Received = (\d+), Lost = (\d+)")
 RTT_STATS_PATTERN = re.compile(r"Minimum = (\d+)ms, Maximum = (\d+)ms, Average = (\d+)ms")
 
@@ -334,10 +337,10 @@ def ping_test() -> PingResult:
         ping_results = []
         for line in output.splitlines():
             if "Reply from" in line:
-                # Look for "time=9ms" or "time<1ms"
+                # Look for reply time values which may be integers or decimals
                 match_time = REPLY_TIME_PATTERN.search(line)
                 if match_time:
-                    ping_results.append(int(match_time.group(1)))
+                    ping_results.append(float(match_time.group(1)))
                 else:
                     ping_results.append(None)
             elif "Request timed out" in line:
@@ -371,9 +374,11 @@ def ping_test() -> PingResult:
             avg_time = int(match_times.group(3))
         else:
             if valid_times:
-                min_time = min(valid_times)
-                max_time = max(valid_times)
-                avg_time = sum(valid_times) // len(valid_times)
+                # When RTT summary lines are missing, derive statistics from
+                # the collected ping times which may be floats.
+                min_time = int(min(valid_times))
+                max_time = int(max(valid_times))
+                avg_time = int(sum(valid_times) / len(valid_times))
             else:
                 min_time = max_time = avg_time = None
 
